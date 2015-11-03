@@ -168,12 +168,13 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 //uint8_t  spiread(void);
 
   boolean  hwSPI;
-
+  
 #if defined (__STM32F1__)
   volatile uint32 *dataport, *clkport, *csport, *rsport;
   uint32_t _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
            colstart, rowstart; // some displays need this changed
+  uint16_t lineBuffer[ST7735_TFTHEIGHT_18]; // DMA buffer. 16bit color data per pixel
 #elif defined(__AVR__) || defined(CORE_TEENSY)
   volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
