@@ -39,7 +39,7 @@ inline uint16_t swapcolor(uint16_t x) {
 #endif
 
 
-
+  
 // Constructor when using software SPI.  All output pins are configurable.
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t sid, int8_t sclk, int8_t rst) 
   : Adafruit_GFX(ST7735_TFTWIDTH, ST7735_TFTHEIGHT_18)
@@ -82,6 +82,8 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
       SPCR = SPCRbackup;
 //      SPDR = c;
 //      while(!(SPSR & _BV(SPIF)));
+#elif defined (__STM32F1__)
+      SPI.write(c);
 #elif defined (__arm__)
       SPI.setClockDivider(21); //4MHz
       SPI.setDataMode(SPI_MODE0);
@@ -332,6 +334,11 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
     SPI.begin();
     SPI.setClockDivider(21); //4MHz
     SPI.setDataMode(SPI_MODE0);
+#elif defined (__STM32F1__)
+    SPI.begin();
+    SPI.setClockDivider(SPI_CLOCK_DIV2);
+    SPI.setDataMode(SPI_MODE0);
+    SPI.setBitOrder(MSBFIRST);
 #endif
   } else {
     pinMode(_sclk, OUTPUT);
@@ -419,7 +426,7 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
-  
+
   spiwrite(color >> 8);
   spiwrite(color);
 

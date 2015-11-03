@@ -31,7 +31,12 @@ as well as Adafruit raw 1.8" TFT display
  #include "WProgram.h"
 #endif
 
-#include <Adafruit_GFX.h>
+#if defined (__STM32F1__)
+  #include <Adafruit_GFX_AS.h>    // Core graphics library
+#endif
+#if !defined (__STM32F1__)
+  #include <Adafruit_GFX.h>    // Core graphics library
+#endif
 
 #if defined(__SAM3X8E__)
   #include <include/pio.h>
@@ -164,7 +169,12 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
   boolean  hwSPI;
 
-#if defined(__AVR__) || defined(CORE_TEENSY)
+#if defined (__STM32F1__)
+  volatile uint32 *dataport, *clkport, *csport, *rsport;
+  uint32_t _cs, _rs, _rst, _sid, _sclk,
+           datapinmask, clkpinmask, cspinmask, rspinmask,
+           colstart, rowstart; // some displays need this changed
+#elif defined(__AVR__) || defined(CORE_TEENSY)
   volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
