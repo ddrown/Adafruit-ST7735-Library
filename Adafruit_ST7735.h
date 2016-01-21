@@ -31,10 +31,9 @@ as well as Adafruit raw 1.8" TFT display
  #include "WProgram.h"
 #endif
 
-#if defined (__STM32F1__)
+#if defined (__STM32F1__) || defined(ESP8266)
   #include <Adafruit_GFX_AS.h>    // Core graphics library
-#endif
-#if !defined (__STM32F1__)
+#else
   #include <Adafruit_GFX.h>    // Core graphics library
 #endif
 
@@ -163,6 +162,9 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   void     spiwrite(uint8_t),
            writecommand(uint8_t c),
            writedata(uint8_t d),
+           setCS(bool level),
+           setRS(bool level),
+           repeatcolor(uint16_t color, uint16_t times),
            commandList(const uint8_t *addr),
            commonInit(const uint8_t *cmdList);
 //uint8_t  spiread(void);
@@ -186,6 +188,9 @@ class Adafruit_ST7735 : public Adafruit_GFX {
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
   int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
+#elif defined(ESP8266)
+  uint32_t _cs, _rs, _rst, _sid, _sclk,
+           colstart, rowstart; // some displays need this changed
 #endif
 
 };
