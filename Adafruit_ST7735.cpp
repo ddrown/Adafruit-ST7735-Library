@@ -114,7 +114,6 @@ inline void Adafruit_ST7735::repeatcolor(uint16_t color, uint16_t times) {
   while(times > 255) {
     SPI.writePattern(color_bytes, 2, 255);
     times -= 255;
-    //yield();
   }
   if(times > 0) {
     SPI.writePattern(color_bytes, 2, times);
@@ -337,7 +336,11 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
   if(hwSPI) { // Using hardware SPI
 #if defined (SPI_HAS_TRANSACTION)
     SPI.begin();
-    mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
+// ESP8266 choices: 80000000 40000000 26700000
+#define FREQ 40000000
+    SPI.setFrequency(FREQ);
+    mySPISettings = SPISettings(FREQ, MSBFIRST, SPI_MODE0);
+#undef FREQ
 #elif defined (__AVR__)
     SPCRbackup = SPCR;
     SPI.begin();
@@ -353,12 +356,6 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
 #elif defined (__STM32F1__)
     SPI.begin();
     SPI.setClockDivider(SPI_CLOCK_DIV2);
-    SPI.setDataMode(SPI_MODE0);
-    SPI.setBitOrder(MSBFIRST);
-#elif defined(ESP8266)
-    SPI.begin();
-    //SPI.setFrequency(26700000); // should end up being 80/3 = 26.6MHz
-    SPI.setFrequency(81000000); // should end up being 80MHz
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
 #else
