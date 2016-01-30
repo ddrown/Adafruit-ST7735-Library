@@ -147,6 +147,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            setRotation(uint8_t r),
            invertDisplay(boolean i);
   uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
+  void PixelArray(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels);
 
   /* These are not for current use, 8-bit protocol only!
   uint8_t  readdata(void),

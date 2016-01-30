@@ -582,6 +582,37 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
 #endif
 }
 
+void Adafruit_ST7735::PixelArray(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels) {
+  // Rudimentary clipping
+  if((x >= _width) || (y >= _height)) return;
+  if((x+w-1) >= _width)  w = _width-x;
+  if((y+h-1) >= _height)  h = _height-y;
+  setAddrWindow(x, y, x+w-1, y+h-1);
+
+#if defined (SPI_HAS_TRANSACTION)
+    SPI.beginTransaction(mySPISettings);
+#endif
+  setRS(true);
+  setCS(false);
+  
+  if (hwSPI) {
+#if defined(ESP8266)
+    for(uint16_t i = 0; i < h; i++) {
+      const uint16_t *line = pixels + (i*w);
+      SPI.writeBytes((uint8_t *)line, w*2); // 2 bytes per pixel
+    }
+#else
+#error "handle bulk pixel output here"
+#endif
+  } else {    
+// TODO
+  } // end else
+  setCS(true);
+#if defined (SPI_HAS_TRANSACTION)
+    SPI.endTransaction();
+#endif
+}
+
 
 
 void Adafruit_ST7735::fillScreen(uint16_t color) {  
