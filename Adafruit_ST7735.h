@@ -31,7 +31,7 @@ as well as Adafruit raw 1.8" TFT display
  #include "WProgram.h"
 #endif
 
-#if defined (__STM32F1__) || defined(ESP8266)
+#if defined (__STM32F1__)
   #include <Adafruit_GFX_AS.h>    // Core graphics library
 #else
   #include <Adafruit_GFX.h>    // Core graphics library
